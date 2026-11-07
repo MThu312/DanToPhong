@@ -1,0 +1,5 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="AnimaProxima.RacingPack.csproj" />
+  <Project Path="AnimaProxima.RacingPack.Editor.csproj" />
+</Solution>
