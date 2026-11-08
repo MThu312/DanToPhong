@@ -4,26 +4,39 @@ using UnityEngine;
 
 public class XuLyVaChamChoXe : MonoBehaviour
 {
-    // Xử lý va chạm dạng đi xuyên qua (Trigger) như Checkpoint, Vạch đích
+    // Xử lý va chạm dạng đi xuyên qua (Trigger) như Checkpoint, WinPoint, Vạch đích
     private void OnTriggerEnter(Collider other)
     {
-        // Khi xe chạy qua Checkpoint
+        // 1. Khi xe chạy qua Checkpoint
         if (other.gameObject.CompareTag("CheckPoint"))
         {
             Debug.Log("Đã qua một Checkpoint! Đang gọi GameManager...");
 
-            // KÍCH HOẠT DÒNG NÀY ĐỂ CỘNG THỜI GIAN
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.QuaCheckPoint();
             }
         }
 
-        // Khi xe chạy qua vạch đích
-        else if (other.gameObject.CompareTag("Finish"))
+        // 2. KHI XE CHẠY QUA WINPOINT (Tách độc lập hoàn toàn bằng "if")
+        if (other.gameObject.CompareTag("WinPoint"))
         {
-            Debug.Log("Đã về đích thành công!");
-            // GameManager.Instance.VeDich(); // Bỏ comment nếu có hàm về đích
+            Debug.Log("Đã về đích (WinPoint)! Đang gọi GameManager...");
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.QuaWinPoint();
+            }
+        }
+
+        // 3. Khi xe chạy qua vạch đích dự phòng (Finish)
+        if (other.gameObject.CompareTag("Finish"))
+        {
+            Debug.Log("Đã về đích thành công bằng Tag Finish!");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.QuaWinPoint();
+            }
         }
     }
 
