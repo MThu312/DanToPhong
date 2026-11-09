@@ -33,3 +33,9 @@ Xe sẽ **tự động tăng tốc chạy về phía trước** mà không cần
 - **Căn thời gian nhảy (`Space`):** Tận dụng phím nhảy để vượt qua các chướng ngại vật hoặc nhảy chéo lề đường cắt góc cua nhanh hơn.
 - **Tăng tốc thông minh (`W` / `↑`):** Chỉ nhấn giữ tăng tốc ở những đoạn đường thẳng dài để đạt tốc độ tối đa, tránh tăng tốc khi sắp vào cua hẹp.
 - **Xử lý khi bị kẹt:** Nếu xe va chạm bị kẹt vào chướng ngại vật hoặc mép đường, nhấn giữ phím `S` (hoặc `↓`) để lùi xe ra và tiếp tục hành trình.
+
+---
+
+## 📦 4. Tải Bản Build Game (BuildGame.zip)
+Bạn có thể tải gói cài đặt/chạy thử game (dung lượng ~160 MB) trực tiếp qua đường dẫn Google Drive của nhóm:
+👉 [Tải xuống BuildGame.zip tại đây](https://drive.google.com/drive/folders/19yD3hVmTsLrwTkeZ62ubmaOBwO1awUto?usp=sharing)
