@@ -2,76 +2,101 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement; // 👈 NHỚ THÊM DÒNG NÀY Ở ĐẦU FILE
 
 public class GameManager : MonoBehaviour
 {
-    // Biến thời gian cho phép về đích ban đầu
+    // ... (các biến cũ giữ nguyên) ...
     public float thoiGianChoPhepVeDich = 30f;
-
-    // Biến thời gian hồi lại khi xe chạy qua Checkpoint (đặt là 5 giây)
     public float thoiGianHoiKhiQuaCheckPoint = 5f;
-
-    // Khai báo biến chống spam va chạm liên tiếp cho checkpoint
     private float thoiGianCoTheQuaLai = 0f;
 
     public bool ketThucGame = false;
-    public bool winGame = false; // Biến kiểm tra chiến thắng theo video
+    public bool winGame = false;
+    private bool isPaused = false;
 
-    // --- Ô TRONG INSPECTOR ---
-    public GameObject timeGameObject;    // Kéo đối tượng chứa chữ time vào đây
-    public GameObject gameOverObject;    // Kéo bảng Game Over vào đây
-    public GameObject winGameObject;     // Kéo bảng Win Game vào đây (theo video)
+    public GameObject timeGameObject;
+    public GameObject gameOverObject;
+    public GameObject winGameObject;
+    public GameObject tutorialPanelObject;
+    public GameObject pausePanelObject;
 
     private static GameManager instance;
-    public static GameManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<GameManager>();
-            }
-            return instance;
-        }
-    }
+    public static GameManager Instance { get { return instance; } }
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-    }
+    private void Awake() { if (instance == null) instance = this; }
 
     private void Start()
     {
         if (timeGameObject != null) timeGameObject.SetActive(true);
         if (gameOverObject != null) gameOverObject.SetActive(false);
         if (winGameObject != null) winGameObject.SetActive(false);
+        if (pausePanelObject != null) pausePanelObject.SetActive(false);
+
+        if (tutorialPanelObject != null)
+        {
+            tutorialPanelObject.SetActive(true);
+            Time.timeScale = 0f;
+        }
+    }
+
+    public void BatDauGame()
+    {
+        if (tutorialPanelObject != null)
+        {
+            tutorialPanelObject.SetActive(false);
+        }
+        Time.timeScale = 1f;
     }
 
     void Update()
     {
-        // Xử lý đếm ngược thời gian thua cuộc
-        if (!ketThucGame && !winGame)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!ketThucGame && !winGame && (tutorialPanelObject == null || !tutorialPanelObject.activeSelf))
+            {
+                if (isPaused) ResumeGame();
+                else PauseGame();
+            }
+        }
+
+        if (!ketThucGame && !winGame && !isPaused)
         {
             thoiGianChoPhepVeDich -= Time.deltaTime;
-
             if (thoiGianChoPhepVeDich <= 0)
             {
                 thoiGianChoPhepVeDich = 0;
                 KetThucGame();
             }
-
             HienThiThoiGianGame();
         }
 
-        // Xử lý hiển thị khi thắng game (giống hình mẫu video)
         if (winGame)
         {
             if (timeGameObject != null) timeGameObject.SetActive(false);
             if (winGameObject != null) winGameObject.SetActive(true);
         }
+    }
+
+    public void PauseGame()
+    {
+        isPaused = true;
+        if (pausePanelObject != null) pausePanelObject.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        if (pausePanelObject != null) pausePanelObject.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    // 👇 SỬA HÀM QUIT GAME ĐỂ QUAY VỀ SCENE MENU
+    public void QuitGame()
+    {
+        Time.timeScale = 1f; // Phải trả lại thời gian bình thường trước khi chuyển scene
+        SceneManager.LoadScene("menu"); // Tên scene menu của Nhi trong thư mục Assets/scene
     }
 
     public void HienThiThoiGianGame()
@@ -90,36 +115,26 @@ public class GameManager : MonoBehaviour
     {
         if (ketThucGame || winGame) return;
         ketThucGame = true;
-        Debug.Log("Game Over! Hết thời gian.");
-
         if (timeGameObject != null) timeGameObject.SetActive(false);
         if (gameOverObject != null) gameOverObject.SetActive(true);
     }
 
-    // --- HÀM XỬ LÝ KHI QUA CHECKPOINT (Cộng đúng 5s, chống spam) ---
     public void QuaCheckPoint()
     {
         if (!ketThucGame && !winGame)
         {
             if (Time.time < thoiGianCoTheQuaLai) return;
             thoiGianCoTheQuaLai = Time.time + 0.5f;
-
             thoiGianChoPhepVeDich += thoiGianHoiKhiQuaCheckPoint;
-            Debug.Log("Đã qua Checkpoint! Cộng thêm: " + thoiGianHoiKhiQuaCheckPoint + " giây.");
         }
     }
 
-    // --- HÀM XỬ LÝ KHI QUA WINPOINT (Đúng y hệt video) ---
     public void QuaWinPoint()
     {
         if (!ketThucGame)
         {
             winGame = true;
-            if (winGameObject != null)
-            {
-                winGameObject.SetActive(true);
-            }
-            Debug.Log("Chiến thắng! Đã qua WinPoint.");
+            if (winGameObject != null) winGameObject.SetActive(true);
         }
     }
 }
